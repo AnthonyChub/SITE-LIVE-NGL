@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio 7 Dias — Agência Nóga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #b7fc53;
+    --black: #080808;
+    --dark: #0e0e0e;
+    --card: #131313;
+    --border: #1f1f1f;
+    --muted: #555;
+    --text: #e8e8e8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ─── GRID LINES ─── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(183,252,83,0.025) 0px, rgba(183,252,83,0.025) 1px, transparent 1px, transparent 80px),
+      repeating-linear-gradient(0deg, rgba(183,252,83,0.025) 0px, rgba(183,252,83,0.025) 1px, transparent 1px, transparent 80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  section, nav, footer { position: relative; z-index: 1; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 48px;
+    border-bottom: 1px solid rgba(183,252,83,0.1);
+    background: rgba(8,8,8,0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: var(--green);
+  }
+
+  .nav-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .nav-cta {
+    background: var(--green);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-num {
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(280px, 35vw, 520px);
+    color: rgba(183,252,83,0.04);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .eyebrow-pill {
+    background: var(--green);
+    color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    border-radius: 100px;
+  }
+
+  .eyebrow-text {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 9vw, 130px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: #fff;
+    max-width: 900px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .hero h1 em {
+    color: var(--green);
+    font-style: normal;
+    display: block;
+  }
+
+  .hero-sub {
+    margin-top: 28px;
+    font-size: 17px;
+    color: #888;
+    max-width: 520px;
+    line-height: 1.7;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-sub strong { color: var(--text); font-weight: 500; }
+
+  .hero-actions {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    padding: 16px 40px;
+    border-radius: 6px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-2px); opacity: 0.92; }
+  .btn-primary:active { transform: translateY(0); }
+
+  .hero-note {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .hero-stats {
+    margin-top: 72px;
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-left: 2px solid var(--green);
+    padding-left: 16px;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+  }
+
+  /* ─── SECTION TITLES ─── */
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    color: #fff;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .section-title em { color: var(--green); font-style: normal; }
+
+  /* ─── CRONOGRAMA ─── */
+  .schedule {
+    padding: 100px 48px;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .schedule-header {
+    margin-bottom: 56px;
+    max-width: 600px;
+  }
+
+  .schedule-header p {
+    font-size: 15px;
+    color: #777;
+    line-height: 1.7;
+  }
+
+  .schedule-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .sched-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: start;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .sched-row:first-child { border-top: 1px solid var(--border); }
+  .sched-row:hover { background: rgba(183,252,83,0.02); }
+  .sched-row.highlight { background: rgba(183,252,83,0.03); }
+
+  .sched-day {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: rgba(183,252,83,0.2);
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .sched-row.highlight .sched-day { color: var(--green); }
+
+  .sched-content { padding-top: 6px; }
+
+  .sched-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .sched-desc {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    max-width: 540px;
+  }
+
+  .sched-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-top: 8px;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+
+  .b-green { background: rgba(183,252,83,0.1); color: var(--green); border: 1px solid rgba(183,252,83,0.2); }
+  .b-blue { background: rgba(90,150,255,0.1); color: #6ab0ff; border: 1px solid rgba(90,150,255,0.2); }
+  .b-red { background: rgba(255,80,80,0.1); color: #ff7070; border: 1px solid rgba(255,80,80,0.2); }
+  .b-live { background: var(--green); color: var(--black); }
+
+  /* ─── WHAT YOU LEARN ─── */
+  .learn {
+    padding: 100px 48px;
+  }
+
+  .learn-header { margin-bottom: 56px; }
+
+  .learn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .learn-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .learn-card:hover {
+    border-color: rgba(183,252,83,0.3);
+    transform: translateY(-3px);
+  }
+
+  .learn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(183,252,83,0.1);
+    border: 1px solid rgba(183,252,83,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .learn-icon svg { width: 18px; height: 18px; stroke: var(--green); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  .learn-card h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  .learn-card p { font-size: 13px; color: #666; line-height: 1.7; }
+
+  /* ─── QUEM É PRA VOCÊ ─── */
+  .for-who {
+    padding: 100px 48px;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .for-who-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 48px;
+  }
+
+  .for-card {
+    border-radius: 10px;
+    padding: 32px 28px;
+  }
+
+  .for-card.yes {
+    background: rgba(183,252,83,0.05);
+    border: 1px solid rgba(183,252,83,0.15);
+  }
+
+  .for-card.no {
+    background: rgba(255,80,80,0.04);
+    border: 1px solid rgba(255,80,80,0.12);
+  }
+
+  .for-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .for-card.yes .for-card-title { color: var(--green); }
+  .for-card.no .for-card-title { color: #ff6b6b; }
+
+  .for-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+  .for-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: #999;
+    line-height: 1.5;
+  }
+
+  .for-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .for-card.yes .for-list li::before { background: var(--green); }
+  .for-card.no .for-list li::before { background: #ff6b6b; }
+
+  /* ─── FORMATO ─── */
+  .format {
+    padding: 100px 48px;
+  }
+
+  .format-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 48px;
+  }
+
+  .format-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 20px;
+    text-align: center;
+  }
+
+  .format-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--green);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .format-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .format-desc { font-size: 12px; color: #555; line-height: 1.6; }
+
+  /* ─── MENTOR ─── */
+  .mentor {
+    padding: 100px 48px;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mentor-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .mentor-visual {
+    position: relative;
+  }
+
+  .mentor-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mentor-placeholder::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(183,252,83,0.06), transparent);
+  }
+
+  .mentor-placeholder-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(183,252,83,0.08);
+    border: 1px solid rgba(183,252,83,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mentor-placeholder-icon svg { width: 28px; height: 28px; stroke: var(--green); fill: none; stroke-width: 1.5; }
+
+  .mentor-corner {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 80px;
+    height: 80px;
+    background: var(--green);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    border-bottom-right-radius: 12px;
+  }
+
+  .mentor-text .section-label { margin-bottom: 8px; }
+
+  .mentor-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: #fff;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .mentor-bio {
+    font-size: 15px;
+    color: #777;
+    line-height: 1.8;
+    margin-bottom: 28px;
+  }
+
+  .mentor-bio strong { color: var(--text); font-weight: 500; }
+
+  .mentor-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mentor-tag {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: #888;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  /* ─── INSCRIÇÃO ─── */
+  .signup {
+    padding: 100px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .signup-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(183,252,83,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .signup-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .signup h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 7vw, 80px);
+    color: #fff;
+    letter-spacing: 2px;
+    line-height: 0.95;
+    margin-bottom: 16px;
+  }
+
+  .signup h2 em { color: var(--green); font-style: normal; }
+
+  .signup p {
+    font-size: 15px;
+    color: #777;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input::placeholder { color: #444; }
+  .form-input:focus { border-color: rgba(183,252,83,0.4); }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--green);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    padding: 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    margin-top: 4px;
+  }
+
+  .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .form-note {
+    font-size: 12px;
+    color: #444;
+    margin-top: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .platforms {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+
+  .platform-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+  }
+
+  .platform-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 4px;
+    color: var(--green);
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: #333;
+    letter-spacing: 1px;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── SUCCESS STATE ─── */
+  .success-msg {
+    display: none;
+    background: rgba(183,252,83,0.08);
+    border: 1px solid rgba(183,252,83,0.3);
+    border-radius: 10px;
+    padding: 32px;
+    text-align: center;
+  }
+
+  .success-msg.show { display: block; }
+
+  .success-msg h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--green);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .success-msg p { font-size: 14px; color: #888; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-tag { display: none; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-bg-num { font-size: 180px; right: -20px; }
+    .hero-stats { gap: 28px; }
+    .schedule, .learn, .for-who, .format, .mentor, .signup { padding: 72px 24px; }
+    .for-who-grid { grid-template-columns: 1fr; }
+    .mentor-inner { grid-template-columns: 1fr; gap: 40px; }
+    .mentor-placeholder { aspect-ratio: 1/1; max-width: 280px; }
+    footer { padding: 24px; flex-direction: column; align-items: flex-start; }
+    .sched-row { grid-template-columns: 60px 1fr; }
+    .sched-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">AGÊNCIA NÓGA</div>
+  <div class="nav-tag">DESAFIO 7 DIAS</div>
+  <a href="#inscricao" class="nav-cta">QUERO PARTICIPAR</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-num">7</div>
+
+  <div class="hero-eyebrow">
+    <span class="eyebrow-pill">AO VIVO</span>
+    <span class="eyebrow-text">7 DIAS · 7 LIVES · 1 RESULTADO REAL</span>
+  </div>
+
+  <h1>
+    Do zero à<br>
+    <em>primeira venda</em><br>
+    no Mercado Livre.
+  </h1>
+
+  <p class="hero-sub">
+    Acompanha ao vivo enquanto eu constro um negócio do absoluto zero no ML — 
+    <strong>uma live por dia, bastidores reais, sem cortes.</strong>
+    No dia 7, você vê o resultado e aprende o método completo.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#inscricao" class="btn-primary">GARANTIR MINHA VAGA</a>
+    <span class="hero-note">Gratuito · Link enviado por e-mail</span>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">7</span>
+      <span class="stat-label">LIVES AO VIVO</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">BASTIDORES REAIS</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">0</span>
+      <span class="stat-label">REAIS PARA COMEÇAR</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">1</span>
+      <span class="stat-label">MÉTODO COMPROVADO</span>
+    </div>
+  </div>
+</section>
+
+<!-- CRONOGRAMA -->
+<section class="schedule" id="cronograma">
+  <div class="schedule-header reveal">
+    <div class="section-label">CRONOGRAMA</div>
+    <h2 class="section-title">O que acontece<br><em>cada dia.</em></h2>
+    <p>Uma live por dia, mesmo horário. Você acompanha o desafio em tempo real — cada erro, cada ajuste, cada decisão.</p>
+  </div>
+
+  <div class="schedule-grid">
+    <div class="sched-row reveal">
+      <div class="sched-day">01</div>
+      <div class="sched-content">
+        <div class="sched-title">O lançamento do desafio</div>
+        <div class="sched-desc">Apresento as regras, revelo o nicho escolhido e mostro a conta ML zerada. A promessa começa aqui.</div>
+      </div>
+      <span class="sched-badge b-green">AQUECIMENTO</span>
+    </div>
+    <div class="sched-row reveal">
+      <div class="sched-day">02</div>
+      <div class="sched-content">
+        <div class="sched-title">Pesquisa de produto ao vivo</div>
+        <div class="sched-desc">Compartilho a tela, uso as ferramentas certas e escolho o produto na frente de todo mundo.</div>
+      </div>
+      <span class="sched-badge b-blue">DIDÁTICO</span>
+    </div>
+    <div class="sched-row reveal">
+      <div class="sched-day">03</div>
+      <div class="sched-content">
+        <div class="sched-title">Criando o anúncio perfeito</div>
+        <div class="sched-desc">Título, fotos, descrição e precificação — tudo montado ao vivo com explicação de cada decisão.</div>
+      </div>
+      <span class="sched-badge b-blue">DIDÁTICO</span>
+    </div>
+    <div class="sched-row reveal">
+      <div class="sched-day">04</div>
+      <div class="sched-content">
+        <div class="sched-title">O segredo do algoritmo</div>
+        <div class="sched-desc">O que o ML prioriza e as ações específicas que aceleram a primeira venda. O episódio que viraliza.</div>
+      </div>
+      <span class="sched-badge b-blue">DIDÁTICO</span>
+    </div>
+    <div class="sched-row reveal">
+      <div class="sched-day">05</div>
+      <div class="sched-content">
+        <div class="sched-title">Update honesto + perguntas</div>
+        <div class="sched-desc">Métricas reais do painel: visitas, cliques, posição no ranking. Sem filtro. Com sessão de Q&A.</div>
+      </div>
+      <span class="sched-badge b-red">TENSÃO</span>
+    </div>
+    <div class="sched-row reveal">
+      <div class="sched-day">06</div>
+      <div class="sched-content">
+        <div class="sched-title">A véspera — contagem regressiva</div>
+        <div class="sched-desc">Recap dos 6 dias, o que vem amanhã e o primeiro teaser do que vou abrir na live final.</div>
+      </div>
+      <span class="sched-badge b-red">URGÊNCIA</span>
+    </div>
+    <div class="sched-row highlight reveal">
+      <div class="sched-day">07</div>
+      <div class="sched-content">
+        <div class="sched-title">Resultado ao vivo + lançamento</div>
+        <div class="sched-desc">Revelação do resultado, método completo e abertura das vagas da mentoria com oferta exclusiva para quem está ao vivo.</div>
+      </div>
+      <span class="sched-badge b-live">LIVE FINAL</span>
+    </div>
+  </div>
+</section>
+
+<!-- O QUE VOCÊ VAI APRENDER -->
+<section class="learn" id="conteudo">
+  <div class="learn-header reveal">
+    <div class="section-label">CONTEÚDO</div>
+    <h2 class="section-title">O que você aprende<br><em>nos 7 dias.</em></h2>
+  </div>
+
+  <div class="learn-grid">
+    <div class="learn-card reveal">
+      <div class="learn-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      <h3>Pesquisa de produto</h3>
+      <p>Como encontrar produtos com demanda real e margem saudável — sem achismo, com dados e ferramentas certas.</p>
+    </div>
+    <div class="learn-card reveal">
+      <div class="learn-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <h3>Anúncio que vende</h3>
+      <p>Título com palavras-chave, fotos que convertem e descrição persuasiva. Tudo com base em como o comprador pensa.</p>
+    </div>
+    <div class="learn-card reveal">
+      <div class="learn-icon">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3>Precificação estratégica</h3>
+      <p>Como calcular preço competitivo sem matar a margem. A matemática que a maioria ignora e quebra nos primeiros meses.</p>
+    </div>
+    <div class="learn-card reveal">
+      <div class="learn-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Algoritmo do ML</h3>
+      <p>Os sinais que o Mercado Livre usa para ranquear anúncios — e as ações que você faz no dia 1 para aparecer na frente.</p>
+    </div>
+    <div class="learn-card reveal">
+      <div class="learn-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <h3>Métricas que importam</h3>
+      <p>O que olhar no painel do ML, como interpretar os dados e quais ajustes fazer baseado nos números reais.</p>
+    </div>
+    <div class="learn-card reveal">
+      <div class="learn-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3>Método replicável</h3>
+      <p>No dia 7 você sai com o processo completo documentado — que pode repetir para qualquer produto ou nicho.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUEM É PRA VOCÊ -->
+<section class="for-who">
+  <div class="reveal">
+    <div class="section-label">PÚBLICO</div>
+    <h2 class="section-title">Esse desafio é<br><em>para você?</em></h2>
+  </div>
+
+  <div class="for-who-grid">
+    <div class="for-card yes reveal">
+      <div class="for-card-title">É PRA VOCÊ SE...</div>
+      <ul class="for-list">
+        <li>Quer vender no ML mas não sabe por onde começar</li>
+        <li>Já tentou e não conseguiu chegar na primeira venda</li>
+        <li>Aprende melhor vendo alguém fazer do que só lendo</li>
+        <li>Quer um método validado, não teoria de livro</li>
+        <li>Está disposto a acompanhar ao vivo 7 dias seguidos</li>
+      </ul>
+    </div>
+    <div class="for-card no reveal">
+      <div class="for-card-title">NÃO É PRA VOCÊ SE...</div>
+      <ul class="for-list">
+        <li>Quer resultado sem nenhum esforço ou atenção</li>
+        <li>Já vende muito e quer estratégias avançadas de escala</li>
+        <li>Não tem interesse no Mercado Livre como canal</li>
+        <li>Prefere conteúdo gravado no seu próprio tempo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FORMATO -->
+<section class="format">
+  <div class="reveal">
+    <div class="section-label">FORMATO</div>
+    <h2 class="section-title">Como funciona<br><em>na prática.</em></h2>
+  </div>
+
+  <div class="format-cards">
+    <div class="format-card reveal">
+      <div class="format-num">7</div>
+      <div class="format-label">LIVES</div>
+      <div class="format-desc">Uma por dia, mesmo horário, durante 7 dias consecutivos</div>
+    </div>
+    <div class="format-card reveal">
+      <div class="format-num">3</div>
+      <div class="format-label">PLATAFORMAS</div>
+      <div class="format-desc">Instagram, YouTube e TikTok simultaneamente</div>
+    </div>
+    <div class="format-card reveal">
+      <div class="format-num">30–</div>
+      <div class="format-label">MIN POR LIVE</div>
+      <div class="format-desc">Entre 30 e 90 minutos dependendo do dia e das perguntas</div>
+    </div>
+    <div class="format-card reveal">
+      <div class="format-num">0</div>
+      <div class="format-label">CUSTO</div>
+      <div class="format-desc">Totalmente gratuito — o link chega por e-mail após inscrição</div>
+    </div>
+  </div>
+</section>
+
+<!-- MENTOR -->
+<section class="mentor" id="mentor">
+  <div class="mentor-inner">
+    <div class="mentor-visual reveal">
+      <div class="mentor-placeholder">
+        <div class="mentor-placeholder-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span style="font-size:11px; letter-spacing:2px; color:#333; font-family:'Barlow Condensed',sans-serif; font-weight:600;">ADICIONE SUA FOTO AQUI</span>
+      </div>
+      <div class="mentor-corner"></div>
+    </div>
+    <div class="mentor-text reveal">
+      <div class="section-label">QUEM VAI GUIAR VOCÊ</div>
+      <div class="mentor-name">SEU<br>NOME AQUI</div>
+      <p class="mentor-bio">
+        Consultor de Marketplaces com experiência em <strong>estruturar operações do zero</strong> no Mercado Livre. 
+        Já ajudou dezenas de vendedores a conquistar suas primeiras vendas com método — 
+        não com sorte. <strong>Agora vai fazer ao vivo, em tempo real, para você ver como é.</strong>
+      </p>
+      <div class="mentor-tags">
+        <span class="mentor-tag">MERCADO LIVRE</span>
+        <span class="mentor-tag">MARKETPLACE</span>
+        <span class="mentor-tag">E-COMMERCE</span>
+        <span class="mentor-tag">MENTORIA</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSCRIÇÃO -->
+<section class="signup" id="inscricao">
+  <div class="signup-glow"></div>
+  <div class="signup-inner">
+    <div class="reveal">
+      <div class="section-label" style="text-align:center; margin-bottom:16px;">INSCRIÇÃO GRATUITA</div>
+      <h2>Garante<br>sua <em>vaga.</em></h2>
+      <p>As lives acontecem ao vivo. Você recebe o link de acesso por e-mail antes de cada episódio.</p>
+    </div>
+
+    <div id="form-container" class="reveal">
+      <div class="form-group">
+        <input type="text" class="form-input" id="nome" placeholder="Seu nome" autocomplete="name">
+        <input type="email" class="form-input" id="email" placeholder="Seu melhor e-mail" autocomplete="email">
+        <input type="tel" class="form-input" id="whatsapp" placeholder="WhatsApp (opcional)" autocomplete="tel">
+      </div>
+      <button class="btn-submit" onclick="handleSubmit()">QUERO PARTICIPAR DO DESAFIO →</button>
+      <p class="form-note">Seus dados estão seguros. Zero spam. Apenas os links das lives.</p>
+    </div>
+
+    <div class="success-msg" id="success">
+      <h3>VOCÊ ESTÁ DENTRO!</h3>
+      <p>Inscrição confirmada. Fique de olho no seu e-mail — o link da primeira live chega antes do começo.</p>
+    </div>
+
+    <div class="platforms reveal">
+      <div class="platform-tag"><span class="platform-dot"></span>INSTAGRAM</div>
+      <div class="platform-tag"><span class="platform-dot"></span>YOUTUBE</div>
+      <div class="platform-tag"><span class="platform-dot"></span>TIKTOK</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">AGÊNCIA NÓGA</div>
+  <div class="footer-note">© 2025 · DESAFIO 7 DIAS · MERCADO LIVRE</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Form submit
+  function handleSubmit() {
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    if (!nome || !email) {
+      document.getElementById('nome').style.borderColor = 'rgba(255,80,80,0.5)';
+      document.getElementById('email').style.borderColor = 'rgba(255,80,80,0.5)';
+      setTimeout(() => {
+        document.getElementById('nome').style.borderColor = '';
+        document.getElementById('email').style.borderColor = '';
+      }, 2000);
+      return;
+    }
+
+    document.getElementById('form-container').style.display = 'none';
+    document.getElementById('success').classList.add('show');
+  }
+
+  // Nav active scroll
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 60) {
+      nav.style.borderBottomColor = 'rgba(183,252,83,0.15)';
+    } else {
+      nav.style.borderBottomColor = 'rgba(183,252,83,0.1)';
+    }
+  });
+</script>
+</body>
+</html>
